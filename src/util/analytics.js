@@ -1,5 +1,5 @@
 import Analytics from "analytics";
-import amplitudePlugin from "@analytics/amplitude";
+//import amplitudePlugin from "@analytics/amplitude";
 import Router from "next/router";
 
 // Initialize analytics and plugins
@@ -8,15 +8,15 @@ const analytics = Analytics({
   debug: process.env.NODE_ENV !== "production",
   plugins: [
     // Instructions: https://divjoy.com/docs/amplitude
-    amplitudePlugin({
-      apiKey: process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY,
-      // See options at https://amplitude.github.io/Amplitude-JavaScript/Options/
-      options: {
-        trackingOptions: {
-          ip_address: false,
-        },
-      },
-    }),
+    //amplitudePlugin({
+    //  apiKey: process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY,
+    //  // See options at https://amplitude.github.io/Amplitude-JavaScript/Options/
+    //  options: {
+    //    trackingOptions: {
+    //      ip_address: false,
+    //    },
+    //  },
+    //}),
   ],
 });
 

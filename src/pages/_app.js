@@ -5,6 +5,7 @@ import "util/analytics.js";
 import { AuthProvider } from "util/auth.js";
 import { ThemeProvider } from "util/theme.js";
 import { QueryClientProvider } from "util/db.js";
+import '../styles/global.css'
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -12,25 +13,9 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider>
         <AuthProvider>
           <>
-            <Navbar
-              color="default"
-              logo="https://uploads.divjoy.com/logo.svg"
-              logoInverted="https://uploads.divjoy.com/logo-white.svg"
-            />
 
             <Component {...pageProps} />
 
-            <Footer
-              bgColor="default"
-              size="medium"
-              bgImage=""
-              bgImageOpacity={1}
-              description="A short description of what you do here"
-              copyright={`© ${new Date().getFullYear()} Company`}
-              logo="https://uploads.divjoy.com/logo.svg"
-              logoInverted="https://uploads.divjoy.com/logo-white.svg"
-              sticky={true}
-            />
           </>
         </AuthProvider>
       </ThemeProvider>
