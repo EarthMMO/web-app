@@ -32,7 +32,8 @@
     "build": "next build",
     "start": "next start",
     "json-server": "json-server --watch db.json --port 8000",
-    "stripe-webhook": "stripe listen --forward-to localhost:3000/api/stripe-webhook"
+    "stripe-webhook": "stripe listen --forward-to localhost:3000/api/stripe-webhook",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@headlessui/react": "^1.4.2",
@@ -44,9 +45,15 @@
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.27.1",
+    "husky": ">=6",
+    "lint-staged": ">=10",
     "postcss": "^8.4.4",
     "prettier": "2.5.1",
     "tailwindcss": "^3.0.1",
     "typescript": "^4.5.3"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
