@@ -6,61 +6,53 @@ import React, {
   createContext,
 } from "react";
 import queryString from "query-string";
-import firebase from "./firebase";
+import fakeAuth from "fake-auth";
+
 import { useUser, createUser, updateUser } from "./db";
 import router from "next/router";
-import PageLoader from "./../components/PageLoader";
-import { getFriendlyPlanId } from "./prices";
+//import PageLoader from "./../components/PageLoader";
+
 import analytics from "./analytics";
 
-// Whether to merge extra user data from database into auth.user
+// Whether to merge extra user data from database into `auth.user`
 const MERGE_DB_USER = true;
-// Whether to send email verification on signup
-const EMAIL_VERIFICATION = true;
-// Whether to connect analytics session to user.uid
+
+// Whether to connect analytics session to `user.uid`
 const ANALYTICS_IDENTIFY = true;
 
+// Create a `useAuth` hook and `AuthProvider` that enables
+// any component to subscribe to auth and re-render when it changes.
 const authContext = createContext();
-
-// Context Provider component that wraps your app and makes auth object
-// available to any child component that calls the useAuth() hook.
+export const useAuth = () => useContext(authContext);
+// This should wrap the app in `src/pages/_app.js`
 export function AuthProvider({ children }) {
   const auth = useAuthProvider();
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
-// Hook that enables any component to subscribe to auth state
-export const useAuth = () => {
-  return useContext(authContext);
-};
-
-// Provider hook that creates auth object and handles state
+// Hook that creates the `auth` object and handles state
+// This is called from `AuthProvider` above (extracted out for readability)
 function useAuthProvider() {
-  // Store auth user object
+  // Store auth user in state
+  // `user` will be object, `null` (loading) or `false` (logged out)
   const [user, setUser] = useState(null);
 
-  // Format final user object and merge extra data from database
-  const finalUser = usePrepareUser(user);
+  // Merge extra user data from the database
+  // This means extra user data (such as payment plan) is available as part
+  // of `auth.user` and doesn't need to be fetched separately. Convenient!
+  let finalUser = useMergeExtraData(user, { enabled: MERGE_DB_USER });
+
+  // Add custom fields and formatting to the `user` object
+  finalUser = useFormatUser(finalUser);
 
   // Connect analytics session to user
-  useIdentifyUser(finalUser);
+  useIdentifyUser(finalUser, { enabled: ANALYTICS_IDENTIFY });
 
-  // Handle response from authentication functions
-  const handleAuth = async (response) => {
-    const { user, additionalUserInfo } = response;
-
-    // Ensure Firebase is actually ready before we continue
-    await waitForFirebase();
-
-    // Create the user in the database if they are new
-    if (additionalUserInfo.isNewUser) {
-      await createUser(user.uid, { email: user.email });
-
-      // Send email verification if enabled
-      if (EMAIL_VERIFICATION) {
-        firebase.auth().currentUser.sendEmailVerification();
-      }
-    }
+  // Handle response from auth functions
+  const handleAuth = async (user) => {
+    // Create the user in the database
+    // fake-auth doesn't indicate if they are new so we attempt to create user every time
+    await createUser(user.uid, { email: user.email });
 
     // Update user in state
     setUser(user);
@@ -68,89 +60,76 @@ function useAuthProvider() {
   };
 
   const signup = (email, password) => {
-    return firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(handleAuth);
+    return fakeAuth
+      .signup(email, password)
+      .then((response) => handleAuth(response.user));
   };
 
   const signin = (email, password) => {
-    return firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(handleAuth);
+    return fakeAuth
+      .signin(email, password)
+      .then((response) => handleAuth(response.user));
   };
 
   const signinWithProvider = (name) => {
-    // Get provider data by name ("password", "google", etc)
-    const providerData = allProviders.find((p) => p.name === name);
-
-    const provider = new providerData.providerMethod();
-
-    if (providerData.parameters) {
-      provider.setCustomParameters(providerData.parameters);
-    }
-
-    return firebase.auth().signInWithPopup(provider).then(handleAuth);
+    return fakeAuth
+      .signinWithProvider(name)
+      .then((response) => handleAuth(response.user));
   };
 
   const signout = () => {
-    return firebase.auth().signOut();
+    return fakeAuth.signout();
   };
 
   const sendPasswordResetEmail = (email) => {
-    return firebase.auth().sendPasswordResetEmail(email);
+    return fakeAuth.sendPasswordResetEmail(email);
   };
 
   const confirmPasswordReset = (password, code) => {
+    // [INTEGRATING AN AUTH SERVICE]: If not passing in "code" as the second
+    // arg above then make sure getFromQueryString() below has the correct
+    // url parameter name (it might not be "code").
+
     // Get code from query string object
-    const resetCode = code || getFromQueryString("oobCode");
-
-    return firebase.auth().confirmPasswordReset(resetCode, password);
-  };
-
-  const updateEmail = (email) => {
-    return firebase
-      .auth()
-      .currentUser.updateEmail(email)
-      .then(() => {
-        // Update user in state (since onAuthStateChanged doesn't get called)
-        setUser(firebase.auth().currentUser);
-      });
+    const resetCode = code || getFromQueryString("code");
+    return fakeAuth.confirmPasswordReset(password, resetCode);
   };
 
   const updatePassword = (password) => {
-    return firebase.auth().currentUser.updatePassword(password);
+    return fakeAuth.updatePassword(password);
   };
 
-  // Update auth user and persist to database (including any custom values in data)
-  // Forms can call this function instead of multiple auth/db update functions
+  // Update auth user and persist data to database
+  // Call this function instead of multiple auth/db update functions
   const updateProfile = async (data) => {
     const { email, name, picture } = data;
 
     // Update auth email
     if (email) {
-      await firebase.auth().currentUser.updateEmail(email);
+      await fakeAuth.updateEmail(email);
     }
 
-    // Update auth profile fields
+    // Update built-in auth profile fields
+    // These fields are renamed in `useFormatUser`, so when updating we
+    // need to make sure to use their original names (`name`, `picture`, etc)
     if (name || picture) {
       let fields = {};
-      if (name) fields.displayName = name;
-      if (picture) fields.photoURL = picture;
-      await firebase.auth().currentUser.updateProfile(fields);
+      if (name) fields.name = name;
+      if (picture) fields.picture = picture;
+      await fakeAuth.updateProfile(fields);
     }
 
     // Persist all data to the database
     await updateUser(user.uid, data);
 
     // Update user in state
-    setUser(firebase.auth().currentUser);
+    const currentUser = await fakeAuth.getCurrentUser();
+    setUser(currentUser);
   };
 
   useEffect(() => {
     // Subscribe to user on mount
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = fakeAuth.onChange(async ({ user }) => {
       if (user) {
         setUser(user);
       } else {
@@ -170,76 +149,71 @@ function useAuthProvider() {
     signout,
     sendPasswordResetEmail,
     confirmPasswordReset,
-    updateEmail,
     updatePassword,
     updateProfile,
   };
 }
 
-// Format final user object and merge extra data from database
-function usePrepareUser(user) {
-  // Fetch extra data from database (if enabled and auth user has been fetched)
-  const userDbQuery = useUser(MERGE_DB_USER && user && user.uid);
-
-  // Memoize so we only create a new object if user or userDbQuery changes
+function useFormatUser(user) {
+  // Memoize so returned object has a stable identity
   return useMemo(() => {
-    // Return if auth user is null (loading) or false (not authenticated)
+    // Return if auth user is `null` (loading) or `false` (not authenticated)
     if (!user) return user;
 
-    // Data we want to include from auth user object
-    let finalUser = {
-      uid: user.uid,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      name: user.displayName,
-      picture: user.photoURL,
-    };
-
-    // Include an array of user's auth providers, such as ["password", "google", etc]
+    // Create an array of user's auth providers by id, such as ["password", "google", etc]
     // Components can read this to prompt user to re-auth with the correct provider
-    finalUser.providers = user.providerData.map(({ providerId }) => {
-      return allProviders.find((p) => p.id === providerId).name;
-    });
+    const providers = [user.provider];
 
-    // If merging user data from database is enabled ...
-    if (MERGE_DB_USER) {
-      switch (userDbQuery.status) {
-        case "idle":
-          // Return null user until we have db data to merge
-          return null;
-        case "loading":
-          return null;
-        case "error":
-          // Log query error to console
-          console.error(userDbQuery.error);
-          return null;
-        case "success":
-          // If user data doesn't exist we assume this means user just signed up and the createUser
-          // function just hasn't completed. We return null to indicate a loading state.
-          if (userDbQuery.data === null) return null;
+    return {
+      // Include full auth user data
+      ...user,
 
-          // Merge user data from database into finalUser object
-          Object.assign(finalUser, userDbQuery.data);
+      // User's auth providers
+      providers: providers,
+    };
+  }, [user]);
+}
 
-          // Get values we need for setting up some custom fields below
-          const { stripePriceId, stripeSubscriptionStatus } = userDbQuery.data;
+function useMergeExtraData(user, { enabled }) {
+  // Get extra user data from database
+  const { data, status, error } = useUser(enabled && user && user.uid);
 
-          // Add planId field (such as "basic", "premium", etc) based on stripePriceId
-          if (stripePriceId) {
-            finalUser.planId = getFriendlyPlanId(stripePriceId);
-          }
+  // Memoize so returned object has a stable identity
+  return useMemo(() => {
+    // If disabled or no auth user (yet) then just return
+    if (!enabled || !user) return user;
 
-          // Add planIsActive field and set to true if subscription status is "active" or "trialing"
-          finalUser.planIsActive = ["active", "trialing"].includes(
-            stripeSubscriptionStatus
-          );
-
-        // no default
-      }
+    switch (status) {
+      case "success":
+        // If successful, but `data` is `null`, that means user just signed up and the `createUser`
+        // function hasn't populated the db yet. Return `null` to indicate auth is still loading.
+        // The above call to `useUser` will re-render things once the data comes in.
+        if (data === null) return null;
+        // Return auth `user` merged with extra user `data`
+        return { ...user, ...data };
+      case "error":
+        // Uh oh.. Let's at least show a helpful error.
+        throw new Error(`
+          Error: ${error.message}
+          This happened while attempting to fetch extra user data from the database
+          to include with the authenticated user. Make sure the database is setup or
+          disable merging extra user data by setting MERGE_DB_USER to false.
+        `);
+      default:
+        // We have an `idle` or `loading` status so return `null`
+        // to indicate that auth is still loading.
+        return null;
     }
+  }, [user, enabled, data, status, error]);
+}
 
-    return finalUser;
-  }, [user, userDbQuery]);
+// Connect analytics session to current user
+function useIdentifyUser(user, { enabled }) {
+  useEffect(() => {
+    if (enabled && user) {
+      analytics.identify(user.uid);
+    }
+  }, [user]);
 }
 
 // A Higher Order Component for requiring authentication
@@ -256,94 +230,14 @@ export const requireAuth = (Component) => {
     }, [auth]);
 
     // Show loading indicator
-    // We're either loading (user is null) or we're about to redirect (user is false)
+    // We're either loading (user is `null`) or about to redirect from above `useEffect` (user is `false`)
     if (!auth.user) {
-      return <PageLoader />;
+      //return <PageLoader />;
     }
 
     // Render component now that we have user
     return <Component {...props} />;
   };
-};
-
-// Handle Firebase email link for reverting to original email
-export const handleRecoverEmail = (code) => {
-  let originalEmail;
-  return firebase
-    .auth()
-    .checkActionCode(code)
-    .then((info) => {
-      originalEmail = info.data.email;
-      // Revert to original email by applying action code
-      return firebase.auth().applyActionCode(code);
-    })
-    .then(() => {
-      // Send password reset email so user can change their pass if they
-      // think someone else has access to their account.
-      return firebase.auth().sendPasswordResetEmail(originalEmail);
-    })
-    .then(() => {
-      // Return original email so it can be displayed by calling component
-      return originalEmail;
-    });
-};
-
-// Handle Firebase email link for verifying email
-export const handleVerifyEmail = (code) => {
-  return firebase.auth().applyActionCode(code);
-};
-
-const allProviders = [
-  {
-    id: "password",
-    name: "password",
-  },
-  {
-    id: "google.com",
-    name: "google",
-    providerMethod: firebase.auth.GoogleAuthProvider,
-  },
-  {
-    id: "facebook.com",
-    name: "facebook",
-    providerMethod: firebase.auth.FacebookAuthProvider,
-    parameters: {
-      // Tell fb to show popup size UI instead of full website
-      display: "popup",
-    },
-  },
-  {
-    id: "twitter.com",
-    name: "twitter",
-    providerMethod: firebase.auth.TwitterAuthProvider,
-  },
-  {
-    id: "github.com",
-    name: "github",
-    providerMethod: firebase.auth.GithubAuthProvider,
-  },
-];
-
-// Connect analytics session to current user.uid
-function useIdentifyUser(user) {
-  useEffect(() => {
-    if (ANALYTICS_IDENTIFY && user) {
-      analytics.identify(user.uid);
-    }
-  }, [user]);
-}
-
-// Waits on Firebase user to be initialized before resolving promise
-// This is used to ensure auth is ready before any writing to the db can happen
-const waitForFirebase = () => {
-  return new Promise((resolve) => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        resolve(user); // Resolve promise when we have a user
-        unsubscribe(); // Prevent from firing again
-      }
-    });
-  });
 };
 
 const getFromQueryString = (key) => {
