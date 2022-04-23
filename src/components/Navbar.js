@@ -13,6 +13,7 @@ import { Fragment, useEffect } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
 import { classNames } from "utils";
+import { connectWallet } from "utils/auth";
 import { useState } from "react";
 
 const user = null;
@@ -39,16 +40,23 @@ const navigation = [
 export default function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
 
   useEffect(() => {
+    async function setProviderAndSigner() {
+      const { provider, signer } = await connectWallet();
+      setProvider(provider);
+      setSigner(signer);
+    }
+
     if (typeof window !== undefined) {
       setUser(window.ethereum.selectedAddress);
     }
+    if (window.ethereum.selectedAddress !== null) {
+      setProviderAndSigner();
+    }
   }, []);
-
-  if (user === null) {
-    return null;
-  }
 
   /* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */
   return (

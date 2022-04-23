@@ -5,7 +5,6 @@ export default function LoginModal({ isModalOpen, setIsModalOpen }) {
   useEffect(() => {
     async function showModal() {
       const auth = await connectWallet();
-      console.log("WTF");
       if (auth === null) {
         setIsModalOpen(false);
       }
