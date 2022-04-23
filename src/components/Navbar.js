@@ -9,7 +9,7 @@ import {
   UserGroupIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
 import { classNames } from "utils";
@@ -38,6 +38,17 @@ const navigation = [
 
 export default function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      setUser(window.ethereum.selectedAddress);
+    }
+  }, []);
+
+  if (user === null) {
+    return null;
+  }
 
   /* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */
   return (
@@ -51,7 +62,7 @@ export default function Navbar() {
         className={({ open }) =>
           classNames(
             open ? "fixed inset-0 z-40 overflow-y-auto" : "",
-            "bg-white bg-opacity-30 backdrop-filter backdrop-blur fixed z-20 w-full"
+            "bg-white bg-opacity-30 backdrop-filter backdrop-blur fixed w-full"
           )
         }
       >
@@ -69,7 +80,7 @@ export default function Navbar() {
                     </a>
                   </div>
                 </div>
-                <div className="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-7">
+                <div className="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-5">
                   <div className="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
                     <div className="w-full">
                       <label htmlFor="search" className="sr-only">
@@ -110,7 +121,7 @@ export default function Navbar() {
                       href="#"
                       className="text-sm font-medium text-gray-900 hover:underline"
                     >
-                      Go Premium
+                      Events
                     </a>
                     <a
                       href="#"
@@ -165,7 +176,7 @@ export default function Navbar() {
                       href="#"
                       className="ml-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
                     >
-                      New Post
+                      New Event
                     </a>
                   </div>
                 ) : (

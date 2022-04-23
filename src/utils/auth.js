@@ -1,3 +1,12 @@
+import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+import WalletConnect from "@walletconnect/web3-provider";
+import Web3Modal from "web3modal";
+import analytics from "./analytics";
+import fakeAuth from "fake-auth";
+import queryString from "query-string";
+import router from "next/router";
+import { ethers } from "ethers";
+import { useUser, createUser, updateUser } from "./db";
 import React, {
   useState,
   useEffect,
@@ -5,14 +14,42 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import queryString from "query-string";
-import fakeAuth from "fake-auth";
-
-import { useUser, createUser, updateUser } from "./db";
-import router from "next/router";
 //import PageLoader from "./../components/PageLoader";
 
-import analytics from "./analytics";
+export async function connectWallet() {
+  try {
+    const providerOptions = {
+      walletlink: {
+        package: CoinbaseWalletSDK, // Required
+        options: {
+          appName: "Web 3 Modal Demo", // Required
+          infuraId: process.env.INFURA_KEY, // Required unless you provide a JSON RPC url; see `rpc` below
+        },
+      },
+      walletconnect: {
+        package: WalletConnect, // required
+        options: {
+          infuraId: process.env.INFURA_KEY, // required
+        },
+      },
+    };
+
+    const web3Modal = new Web3Modal({
+      network: "mainnet", // optional
+      cacheProvider: true, // optional
+      providerOptions, // required
+    });
+
+    const instance = await web3Modal.connect();
+
+    const provider = new ethers.providers.Web3Provider(instance);
+    const signer = provider.getSigner();
+
+    return { provider, signer };
+  } catch (error) {
+    return null;
+  }
+}
 
 // Whether to merge extra user data from database into `auth.user`
 const MERGE_DB_USER = true;
