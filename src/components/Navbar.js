@@ -89,7 +89,12 @@ export default function Navbar() {
                     </a>
                   </div>
                 </div>
-                <div className="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-5">
+                <div
+                  className={classNames(
+                    user ? "xl:col-span-6" : "xl:col-span-7",
+                    "min-w-0 flex-1 md:px-8 lg:px-0"
+                  )}
+                >
                   <div className="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
                     <div className="w-full">
                       <label htmlFor="search" className="sr-only">
@@ -125,7 +130,7 @@ export default function Navbar() {
                   </Popover.Button>
                 </div>
                 {user ? (
-                  <div className="hidden lg:flex lg:items-center lg:justify-end xl:col-span-4">
+                  <div className="hidden lg:flex lg:items-center lg:justify-end xl:col-span-3">
                     <a
                       href="#"
                       className="text-sm font-medium text-gray-900 hover:underline"
@@ -146,7 +151,7 @@ export default function Navbar() {
                         <Menu.Button className="bg-white rounded-full flex focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
                           <span className="sr-only">Open user menu</span>
                           <img
-                            className="h-8 w-8 rounded-full"
+                            className="h-8 w-8 rounded-full pointer-events-none"
                             src={gravatar.url(
                               "thomazvu@gmail.com",
                               {

@@ -1,9 +1,10 @@
 import fakeAuth from "fake-auth";
+import { BACKEND_API_URL } from "config/config";
 
 export function apiRequest(path, method = "GET", data) {
   const accessToken = fakeAuth.getAccessToken();
 
-  return fetch(`/api/${path}`, {
+  return fetch(`${BACKEND_API_URL}/api/${path}`, {
     method: method,
     headers: {
       "Content-Type": "application/json",
@@ -21,7 +22,7 @@ export function apiRequest(path, method = "GET", data) {
 
         throw new CustomError(response.code, response.message);
       } else {
-        return response.data;
+        return response;
       }
     });
 }

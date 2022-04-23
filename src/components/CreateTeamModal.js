@@ -1,10 +1,16 @@
 import BaseModal from "components/BaseModal";
 import { Dialog } from "@headlessui/react";
-import { useRef } from "react";
+import { apiRequest } from "utils";
+import { useRef, useState } from "react";
 
 export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);
+
+  const [teamName, setTeamName] = useState("");
+  const [teamUrl, setTeamUrl] = useState("");
+  const [teamDescription, setTeamDescription] = useState("");
+  const [teamImage, setTeamImage] = useState(null);
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -14,9 +20,22 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
       current.file = file;
       reader.onload = (e) => {
         current.src = e.target.result;
+        setTeamImage(e.target.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await apiRequest("team", "POST", {
+      adminUserId: window.currentUser,
+      description: teamDescription,
+      name: teamName,
+      icon: teamImage,
+      totalNumberOfPeople: 5, // TODO: hard-coded
+      url: teamUrl,
+    });
   };
 
   return (
@@ -41,16 +60,17 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
               <div className="mt-1">
                 <input
                   type="text"
-                  name="last-name"
-                  id="last-name"
-                  autoComplete="family-name"
+                  name="team-name"
+                  id="team-name"
+                  autoComplete="team-name"
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                  onChange={(e) => setTeamName(e.target.value)}
                 />
               </div>
             </div>
             <div className="col-span-3 sm:col-span-2">
               <label
-                htmlFor="company-website"
+                htmlFor="team-url"
                 className="block text-sm font-medium text-gray-700"
               >
                 Team URL
@@ -61,10 +81,11 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
                 </span>
                 <input
                   type="text"
-                  name="company-website"
-                  id="company-website"
+                  name="team-url"
+                  id="team-url"
                   className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
                   placeholder="www.example.com"
+                  onChange={(e) => setTeamUrl(e.target.value)}
                 />
               </div>
             </div>
@@ -79,12 +100,13 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
             </label>
             <div className="mt-1">
               <textarea
-                id="about"
-                name="about"
+                id="description"
+                name="description"
                 rows={3}
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                 placeholder="Describe your team's project"
                 defaultValue={""}
+                onChange={(e) => setTeamDescription(e.target.value)}
               />
             </div>
           </div>
@@ -132,7 +154,7 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
         </div>
         <div className="px-4 py-3 text-right sm:px-6">
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Create
