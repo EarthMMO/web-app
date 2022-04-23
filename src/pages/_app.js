@@ -1,8 +1,9 @@
-import "../styles/global.css";
-import "util/analytics.js";
+import "styles/custom.css";
+import "styles/global.css";
+import "utils/analytics.js";
 import React from "react";
-import { AuthProvider } from "util/auth.js";
-import { QueryClientProvider } from "util/db.js";
+import { AuthProvider } from "utils/auth.js";
+import { QueryClientProvider } from "utils/db.js";
 
 function MyApp({ Component, pageProps }) {
   return (

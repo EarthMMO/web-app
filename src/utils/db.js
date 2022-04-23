@@ -3,7 +3,7 @@ import {
   QueryClient,
   QueryClientProvider as QueryClientProviderBase,
 } from "react-query";
-import { apiRequest } from "./util";
+import { apiRequest } from ".";
 
 // For interacting with the React Query cache
 const queryClient = new QueryClient();

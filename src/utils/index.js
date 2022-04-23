@@ -32,3 +32,7 @@ export function CustomError(code, message) {
   error.code = code;
   return error;
 }
+
+export function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
