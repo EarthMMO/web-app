@@ -706,6 +706,10 @@ select {
   pointer-events: none;
 }
 
+.static {
+  position: static;
+}
+
 .fixed {
   position: fixed;
 }
@@ -869,6 +873,10 @@ select {
   margin-left: 1rem;
 }
 
+.mr-6 {
+  margin-right: 1.5rem;
+}
+
 .block {
   display: block;
 }
@@ -931,6 +939,10 @@ select {
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+.min-h-full {
+  min-height: 100%;
 }
 
 .w-full {
@@ -1319,6 +1331,21 @@ select {
 .py-28 {
   padding-top: 7rem;
   padding-bottom: 7rem;
+}
+
+.py-48 {
+  padding-top: 12rem;
+  padding-bottom: 12rem;
+}
+
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .pt-4 {
@@ -1959,6 +1986,10 @@ select {
     position: static;
   }
 
+  .lg\:absolute {
+    position: absolute;
+  }
+
   .lg\:col-span-3 {
     grid-column: span 3 / span 3;
   }
@@ -2011,6 +2042,10 @@ select {
 
   .lg\:gap-8 {
     gap: 2rem;
+  }
+
+  .lg\:overflow-y-visible {
+    overflow-y: visible;
   }
 
   .lg\:px-8 {

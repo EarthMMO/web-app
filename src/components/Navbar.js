@@ -1,5 +1,7 @@
+import Button from "components/Button";
 import Image from "next/image";
 import LoginModal from "components/LoginModal";
+import gravatar from "gravatar";
 import {
   BellIcon,
   FireIcon,
@@ -16,7 +18,6 @@ import { classNames } from "utils";
 import { connectWallet } from "utils/auth";
 import { useState } from "react";
 
-const user = null;
 //const user = {
 //  name: "Chelsea Hagon",
 //  email: "chelseahagon@example.com",
@@ -60,7 +61,7 @@ export default function Navbar() {
 
   /* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */
   return (
-    <div className="relative">
+    <div>
       <LoginModal
         isModalOpen={isLoginModalOpen}
         setIsModalOpen={setIsLoginModalOpen}
@@ -70,7 +71,7 @@ export default function Navbar() {
         className={({ open }) =>
           classNames(
             open ? "fixed inset-0 z-40 overflow-y-auto" : "",
-            "bg-white bg-opacity-30 backdrop-filter backdrop-blur fixed w-full"
+            "bg-white shadow-sm lg:static lg:overflow-y-visible"
           )
         }
       >
@@ -140,13 +141,20 @@ export default function Navbar() {
                     </a>
 
                     {/* Profile dropdown */}
-                    <Menu as="div" className="flex-shrink-0 relative ml-5">
+                    <Menu as="div" className="flex-shrink-0 relative ml-5 mr-6">
                       <div>
                         <Menu.Button className="bg-white rounded-full flex focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500">
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full"
-                            src={user.imageUrl}
+                            src={gravatar.url(
+                              "thomazvu@gmail.com",
+                              {
+                                d: "identicon",
+                                s: "200",
+                              },
+                              { protocol: "https" }
+                            )}
                             alt=""
                           />
                         </Menu.Button>
@@ -179,13 +187,7 @@ export default function Navbar() {
                         </Menu.Items>
                       </Transition>
                     </Menu>
-
-                    <a
-                      href="#"
-                      className="ml-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-                    >
-                      New Event
-                    </a>
+                    <Button label={"New event"} />
                   </div>
                 ) : (
                   <div className="hidden lg:flex lg:items-center lg:justify-end xl:col-span-2">
@@ -237,8 +239,14 @@ export default function Navbar() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
-                        alt=""
+                        src={gravatar.url(
+                          "thomazvu@gmail.com",
+                          {
+                            d: "identicon",
+                            s: "200",
+                          },
+                          { protocol: "https" }
+                        )}
                       />
                     </div>
                     <div className="ml-3">
