@@ -14,7 +14,7 @@ import {
 import { Fragment, useEffect } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
-import { classNames } from "utils";
+import { apiRequest, classNames } from "utils";
 import { connectWallet } from "utils/auth";
 import { useState } from "react";
 
@@ -51,11 +51,17 @@ export default function Navbar() {
       setSigner(signer);
     }
 
-    if (typeof window !== undefined) {
-      setUser(window.ethereum.selectedAddress);
+    async function fetchCurrentUser() {
+      const currentUser = await apiRequest(
+        `user/eth/${window.ethereum.selectedAddress}`,
+        "GET"
+      );
+      setUser(currentUser);
     }
+
     if (window.ethereum.selectedAddress !== null) {
       setProviderAndSigner();
+      fetchCurrentUser();
     }
   }, []);
 
@@ -153,7 +159,7 @@ export default function Navbar() {
                           <img
                             className="h-8 w-8 rounded-full pointer-events-none"
                             src={gravatar.url(
-                              "thomazvu@gmail.com",
+                              user.userId,
                               {
                                 d: "identicon",
                                 s: "200",
@@ -245,7 +251,7 @@ export default function Navbar() {
                       <img
                         className="h-10 w-10 rounded-full"
                         src={gravatar.url(
-                          "thomazvu@gmail.com",
+                          user.userId,
                           {
                             d: "identicon",
                             s: "200",

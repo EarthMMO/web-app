@@ -1,9 +1,9 @@
+import random from "random-name";
 import { ABI, PROFILE_CONTRACT_ADDRESS } from "config/profile_config";
 import { apiRequest } from "utils";
 import { connectWallet } from "utils/auth";
 import { ethers } from "ethers";
 import { useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 export default function LoginModal({ isModalOpen, setIsModalOpen }) {
   useEffect(() => {
@@ -14,11 +14,10 @@ export default function LoginModal({ isModalOpen, setIsModalOpen }) {
       } else {
         try {
           const response = await apiRequest("user", "POST", {
-            firstName: uuidv4(),
-            lastName: uuidv4(),
+            firstName: random.first(),
+            lastName: random.last(),
             ethereumAddress: window.ethereum.selectedAddress,
           });
-          window.currentUser = response.userId;
 
           const name = response.firstName + " " + response.lastName;
 
