@@ -1,4 +1,5 @@
 import Button from "components/Button";
+import FirstTimeModal from "components/LoginModal";
 import Image from "next/image";
 import LoginModal from "components/LoginModal";
 import gravatar from "gravatar";
@@ -11,6 +12,7 @@ import {
   UserGroupIcon,
   XIcon,
 } from "@heroicons/react/outline";
+import { ClipLoader } from "react-spinners";
 import { Fragment, useEffect } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
@@ -39,10 +41,12 @@ const navigation = [
 ];
 
 export default function Navbar() {
+  const [connecting, setConnecting] = useState(false);
+  const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function setProviderAndSigner() {
@@ -69,8 +73,17 @@ export default function Navbar() {
   return (
     <div>
       <LoginModal
+        isFirstTimeModalOpen={isFirstTimeModalOpen}
         isModalOpen={isLoginModalOpen}
+        setConnecting={setConnecting}
+        setIsFirstTimeModalOpen={setIsFirstTimeModalOpen}
         setIsModalOpen={setIsLoginModalOpen}
+        setUser={setUser}
+      />
+      <FirstTimeModal
+        isModalOpen={isFirstTimeModalOpen}
+        setIsModalOpen={setIsFirstTimeModalOpen}
+        setUser={setUser}
       />
       <Popover
         as="header"
@@ -216,10 +229,14 @@ export default function Navbar() {
                     </a>*/}
                     <a
                       href="#"
-                      className="ml-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-neutral-800 hover:bg-neutral-900"
+                      className="ml-6 w-full max-w-[135px] inline-flex items-center px-4 py-2 border border-transparent text-sm justify-center font-medium rounded-md shadow-sm text-white bg-neutral-800 hover:bg-neutral-900"
                       onClick={() => setIsLoginModalOpen(true)}
                     >
-                      Connect wallet
+                      {connecting ? (
+                        <ClipLoader color={"#fff"} size={18} />
+                      ) : (
+                        "Connect wallet"
+                      )}
                     </a>
                   </div>
                 )}

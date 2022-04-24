@@ -4,10 +4,12 @@ import { Dialog } from "@headlessui/react";
 import { apiRequest } from "utils";
 import { useEffect, useRef, useState } from "react";
 
-export default function CreateTeamModal({
+export default function FirstTimeModal({
+  isFirstTimeModalOpen,
   isModalOpen,
+  setIsFirstTimeModalOpen,
   setIsModalOpen,
-  setTeams,
+  //setUser,
 }) {
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);

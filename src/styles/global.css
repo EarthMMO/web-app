@@ -997,6 +997,34 @@ select {
   max-width: 200px;
 }
 
+.max-w-sm {
+  max-width: 24rem;
+}
+
+.max-w-\[50px\] {
+  max-width: 50px;
+}
+
+.max-w-\[150px\] {
+  max-width: 150px;
+}
+
+.max-w-\[130px\] {
+  max-width: 130px;
+}
+
+.max-w-\[120px\] {
+  max-width: 120px;
+}
+
+.max-w-\[140px\] {
+  max-width: 140px;
+}
+
+.max-w-\[135px\] {
+  max-width: 135px;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }

@@ -5,19 +5,32 @@ import { connectWallet } from "utils/auth";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 
-export default function LoginModal({ isModalOpen, setIsModalOpen }) {
+export default function LoginModal({
+  isFirstTimeModalOpen,
+  isModalOpen,
+  setConnecting,
+  setIsFirstTimeModalOpen,
+  setIsModalOpen,
+  setUser,
+}) {
   useEffect(() => {
     async function showModal() {
+      setConnecting(true);
       const auth = await connectWallet();
       if (auth === null) {
+        setConnecting(false);
         setIsModalOpen(false);
       } else {
+        //setIsFirstTimeModalOpen(true);
         try {
-          const response = await apiRequest("user", "POST", {
+          const user = {
             firstName: random.first(),
             lastName: random.last(),
             ethereumAddress: window.ethereum.selectedAddress,
-          });
+          };
+          const response = await apiRequest("user", "POST", user);
+          setUser(user);
+          setConnecting(false);
 
           const name = response.firstName + " " + response.lastName;
 
@@ -42,6 +55,7 @@ export default function LoginModal({ isModalOpen, setIsModalOpen }) {
             profileNFTTokenId: id.toString(),
           });
         } catch (error) {
+          setConnecting(false);
           console.log(error);
         }
       }
