@@ -14,7 +14,6 @@ export default function TeamTable() {
     async function fetchTeams() {
       const teams = await apiRequest("team/all", "GET");
       setTeams(teams);
-      console.log(teams);
     }
 
     async function fetchCurrentUser() {
@@ -34,6 +33,7 @@ export default function TeamTable() {
       <CreateTeamModal
         isModalOpen={isCreateTeamModalOpen}
         setIsModalOpen={setIsCreateTeamModalOpen}
+        setTeams={setTeams}
       />
       <div className="mt-8 sm:flex items-center">
         <div className="sm:flex-auto">
@@ -172,7 +172,7 @@ export default function TeamTable() {
                             label={"Leave"}
                             onClick={async () => {
                               const response = await apiRequest(
-                                "team",
+                                "team/leave",
                                 "PATCH",
                                 {
                                   userId: user.userId,

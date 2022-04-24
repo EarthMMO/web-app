@@ -3,7 +3,11 @@ import { Dialog } from "@headlessui/react";
 import { apiRequest } from "utils";
 import { useEffect, useRef, useState } from "react";
 
-export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
+export default function CreateTeamModal({
+  isModalOpen,
+  setIsModalOpen,
+  setTeams,
+}) {
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);
 
@@ -49,6 +53,9 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
       totalNumberOfPeople: 5, // TODO: hard-coded
       url: teamUrl,
     });
+    const teams = await apiRequest("team/all", "GET");
+    setTeams(teams);
+    setIsModalOpen(false);
   };
 
   return (
