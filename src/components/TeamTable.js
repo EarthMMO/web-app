@@ -88,9 +88,11 @@ function Team({ initialTeam, user }) {
                 userId: user.userId,
                 teamId: team.teamId,
               });
-              const teamResponse = await apiRequest("teamId", "GET", {
-                teamId: team.teamId,
-              });
+              console.log("LEAVE", response);
+              const teamResponse = await apiRequest(
+                `team/${team.teamId}`,
+                "GET"
+              );
               setTeam(teamResponse);
             }}
           />
@@ -109,9 +111,11 @@ function Team({ initialTeam, user }) {
                 userId: user.userId,
                 teamId: team.teamId,
               });
-              const teamResponse = await apiRequest("teamId", "GET", {
-                teamId: team.teamId,
-              });
+              console.log("JOIN INSTANTLY", response);
+              const teamResponse = await apiRequest(
+                `team/${team.teamId}`,
+                "GET"
+              );
               setTeam(teamResponse);
             }}
           />
