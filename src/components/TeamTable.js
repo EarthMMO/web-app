@@ -1,5 +1,6 @@
 import Button from "components/Button";
 import CreateTeamModal from "components/CreateTeamModal";
+import gravatar from "gravatar";
 import { BACKEND_API_URL } from "config/config";
 import { apiRequest } from "utils";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { useEffect, useState } from "react";
 export default function TeamTable() {
   const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
   const [teams, setTeams] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function fetchTeams() {
@@ -15,7 +17,16 @@ export default function TeamTable() {
       console.log(teams);
     }
 
+    async function fetchCurrentUser() {
+      const currentUser = await apiRequest(
+        `user/eth/${window.ethereum.selectedAddress}`,
+        "GET"
+      );
+      setUser(currentUser);
+    }
+
     fetchTeams();
+    fetchCurrentUser();
   }, []);
 
   return (
@@ -108,29 +119,90 @@ export default function TeamTable() {
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <div className="flex -space-x-2 overflow-hidden">
-                          <img
-                            className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-                            src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
-                          />
-                          <span className="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-                            <svg
-                              className="h-full w-full text-gray-300"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                          </span>
+                          {team.participants.map((member) => (
+                            <img
+                              key={team.teamId}
+                              className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+                              src={gravatar.url(
+                                member.userId,
+                                {
+                                  d: "identicon",
+                                  s: "200",
+                                },
+                                { protocol: "https" }
+                              )}
+                              alt=""
+                            />
+                          ))}
+                          {Array(5 - team.participants.length)
+                            .fill(0)
+                            .map((_, i) => (
+                              <span
+                                key={team.teamId}
+                                className="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100"
+                              >
+                                <svg
+                                  className="h-full w-full text-gray-300"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                              </span>
+                            ))}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                          Recruiting (4/5)
-                        </span>
+                        {team.participants.length === 5 ? (
+                          <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-rose-50 text-sm font-medium text-rose-700 hover:bg-rose-100">
+                            {`Full (${team.participants.length}/5)`}
+                          </span>
+                        ) : (
+                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+                            {`Recruiting (${team.participants.length}/5)`}
+                          </span>
+                        )}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <Button label={"Join instantly"} />
+                        {team.participants.includes(user?.userId) ? (
+                          <Button
+                            customStyles={
+                              "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-800"
+                            }
+                            label={"Leave"}
+                            onClick={async () => {
+                              const response = await apiRequest(
+                                "team",
+                                "PATCH",
+                                {
+                                  userId: user.userId,
+                                  teamId: team.teamId,
+                                }
+                              );
+                            }}
+                          />
+                        ) : team.participants.length === 5 ? (
+                          <Button
+                            customStyles={
+                              "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-400 cursor-not-allowed"
+                            }
+                            label={"Team is full"}
+                          />
+                        ) : (
+                          <Button
+                            label={"Join instantly"}
+                            onClick={async () => {
+                              const response = await apiRequest(
+                                "team",
+                                "PATCH",
+                                {
+                                  userId: user.userId,
+                                  teamId: team.teamId,
+                                }
+                              );
+                            }}
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}

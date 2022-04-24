@@ -88,7 +88,7 @@ export default function Navbar() {
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-3">
                   <div className="flex-shrink-0 flex items-center">
                     <a className="flex items-center w-auto" href="#">
-                      <Image src="/logo.png" height={30} width={30} />
+                      <Image src="/lfp.svg" height={30} width={30} />
                       <span className="hidden lg:block ml-2 font-philosopher font-bold text-2xl">
                         Looking for Party
                       </span>

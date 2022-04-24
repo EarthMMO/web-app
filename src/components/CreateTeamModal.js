@@ -1,7 +1,7 @@
 import BaseModal from "components/BaseModal";
 import { Dialog } from "@headlessui/react";
 import { apiRequest } from "utils";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
   const uploadedImage = useRef(null);
@@ -11,6 +11,19 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
   const [teamUrl, setTeamUrl] = useState("");
   const [teamDescription, setTeamDescription] = useState("");
   const [teamImage, setTeamImage] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function fetchCurrentUser() {
+      const currentUser = await apiRequest(
+        `user/eth/${window.ethereum.selectedAddress}`,
+        "GET"
+      );
+      setUser(currentUser);
+    }
+
+    fetchCurrentUser();
+  }, []);
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -29,7 +42,7 @@ export default function CreateTeamModal({ isModalOpen, setIsModalOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await apiRequest("team", "POST", {
-      adminUserId: window.currentUser,
+      adminUserId: user.userId,
       description: teamDescription,
       name: teamName,
       icon: teamImage,

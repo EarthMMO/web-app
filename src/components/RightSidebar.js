@@ -3,24 +3,6 @@ import { PlusSmIcon } from "@heroicons/react/solid";
 import { apiRequest } from "utils";
 import { useEffect, useState } from "react";
 
-const whoToFollow = [
-  {
-    name: "Leonard Krasner",
-    handle: "leonardkrasner",
-    href: "#",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Floyd Miles",
-    handle: "floydmiles",
-    href: "#",
-    imageUrl:
-      "https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  // More people...
-];
-
 export default function RightSidebar() {
   const [attendees, setAttendees] = useState([]);
 
@@ -28,7 +10,6 @@ export default function RightSidebar() {
     async function fetchAttendees() {
       const users = await apiRequest("user/all", "GET");
       setAttendees(users);
-      console.log(users);
     }
 
     fetchAttendees();
