@@ -29,7 +29,7 @@ export async function connectWallet() {
       walletconnect: {
         package: WalletConnect, // required
         options: {
-          infuraId: process.env.INFURA_KEY, // required
+          infuraId: "7238211010344719ad14a89db874158c", // required
         },
       },
     };
