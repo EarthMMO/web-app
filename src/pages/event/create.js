@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "../../components/navbar";
 
+import { usePreviewImage } from "../../utils/usePreviewImage";
+
 const initalState = {
   currency: "USD",
 };
 
 export default function CreateEvent() {
   const [formState, setFormState] = useState(initalState);
-  const [preview, setPreview] = useState();
-  const [previewNFT, setPreviewNFT] = useState();
 
   const handleInputChange = (e) => {
     setFormState((state) => ({
@@ -18,38 +18,14 @@ export default function CreateEvent() {
         e.target.files?.length > 0 ? e.target.files[0] : e.target.value,
     }));
   };
+
   const handleSubmitandMint = (e) => {
     e.preventDefault();
     console.log("submitting formState", formState);
   };
-  // create a preview as a side effect, whenever selected file is changed
-  useEffect(() => {
-    const selectedFile = formState.coverFile;
-    if (!selectedFile) {
-      setPreview(undefined);
-      return;
-    }
 
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreview(objectUrl);
-
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [formState.coverFile]);
-
-  useEffect(() => {
-    const selectedFile = formState.nftFile;
-    if (!selectedFile) {
-      setPreviewNFT(undefined);
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreviewNFT(objectUrl);
-
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [formState.nftFile]);
+  const coverFile = usePreviewImage(formState.coverFile);
+  const nftFile = usePreviewImage(formState.nftFile);
 
   return (
     <>
@@ -269,13 +245,14 @@ export default function CreateEvent() {
                       </label>
                       <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                         <div className="space-y-1 text-center">
-                          {preview ? (
-                            <Image
-                              src={preview}
-                              alt="asdasd"
-                              width={48}
-                              height={48}
-                            />
+                          {coverFile ? (
+                            <div className="h-40 border-1 rounded-md overflow-hidden relative">
+                              <Image
+                                src={coverFile}
+                                alt="asdasd"
+                                layout="fill"
+                              />
+                            </div>
                           ) : (
                             <svg
                               className="mx-auto h-12 w-12 text-gray-400"
@@ -421,13 +398,15 @@ export default function CreateEvent() {
                       </label>
                       <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                         <div className="space-y-1 text-center">
-                          {previewNFT ? (
-                            <Image
-                              src={previewNFT}
-                              alt="asdasd"
-                              width={48}
-                              height={48}
-                            />
+                          {nftFile ? (
+                            <div className="h-40 border-1 rounded-md overflow-hidden relative">
+                              <Image
+                                src={nftFile}
+                                alt="asdasd"
+                                layout="fill"
+                                objectFit="contain"
+                              />
+                            </div>
                           ) : (
                             <svg
                               className="mx-auto h-12 w-12 text-gray-400"
