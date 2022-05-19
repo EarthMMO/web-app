@@ -19,9 +19,29 @@ export default function CreateEvent() {
     }));
   };
 
-  const handleSubmitandMint = (e) => {
+  const handleSubmitandMint = async (e) => {
     e.preventDefault();
     console.log("submitting formState", formState);
+    setLoading(true);
+
+    const metadata = await client.store({
+      name: formState.title,
+      description: formState.description,
+      image: formState.coverFile,
+      properties: { bookFile: formState.bookFile },
+    });
+
+    // setLoading(false);
+    const url = metadata.url.split("//");
+    const URI = `https://ipfs.io/ipfs/${url[1]}`;
+    EventMinterNft({
+      contract,
+      quantity: formState.quantity,
+      URI,
+      price: formState.priceInEth,
+      resetState: () => setFormState(initialState),
+      setLoading: setLoading,
+    });
   };
 
   const coverFile = usePreviewImage(formState.coverFile);

@@ -20,6 +20,20 @@
 .env*
 src/styles/global.css
 
+# Hardhat
+artifacts
+cache
+*.env
+node_modules
+.env
+coverage
+coverage.json
+typechain
+
+#Hardhat files
+cache
+artifacts
+
 # debug
 npm-debug.log*
 yarn-debug.log*

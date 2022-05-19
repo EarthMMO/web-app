@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+contract EventMinter is ERC1155, ERC1155Holder {
+    using Counters for Counters.Counter;
+    address owner;
+
+    Counters.Counter public eventIds;
+    struct Event {
+        string URI;
+        address payable organizer;
+    }
+
+    //event eventId => eventURI
+    mapping(uint256 => Event) public events;
+    //buyer => array of nfts
+    mapping(address => uint256[]) internal eventNFTOwnedByUser;
+
+    constructor() ERC1155("") {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    /**
+     * @dev Returns an URI for a given token ID
+     */
+    function tokenURI(uint256 _tokenId) public view returns (string memory) {
+        return events[_tokenId].URI;
+    }
+
+    //https://forum.openzeppelin.com/t/how-do-i-let-a-user-transfer-erc1155-token-from-my-contract-address-to-his-address/12415/8
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC1155, ERC1155Receiver)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function mintNFT(uint256 _quantity, string memory _URI)
+        external
+        returns (uint256)
+    {
+        uint256 eventId = eventIds.current();
+
+        events[eventId] = Event({URI: _URI, organizer: payable(msg.sender)});
+        _mint(address(this), eventId, _quantity, "");
+        setApprovalForAll(address(this), true);
+        eventIds.increment();
+
+        return eventId;
+    }
+
+    function claim(uint256 _eventId) public payable returns (bool) {
+        require(msg.sender != address(0), "Cannot have zero address");
+        //transfer
+        _safeTransferFrom(address(this), msg.sender, _eventId, 1, "");
+        eventNFTOwnedByUser[msg.sender].push(_eventId);
+
+        return true;
+    }
+
+    //events NFTs owned by user
+    function getIds(address user) external view returns (uint256[] memory) {
+        return eventNFTOwnedByUser[user];
+    }
+}

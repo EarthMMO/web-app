@@ -24,7 +24,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "lib/deploy.helpers.js"  ],
   "exclude": [
     "node_modules"
   ]

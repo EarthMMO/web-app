@@ -190,6 +190,7 @@ export default function Example() {
             <Image
               className="text-center"
               src="/landing.png"
+              alt="Landing"
               height={900}
               width={1200}
             />
