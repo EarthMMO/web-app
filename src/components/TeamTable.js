@@ -130,24 +130,24 @@ export default function TeamTable() {
   const [teams, setTeams] = useState([]);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    async function fetchTeams() {
-      const teams = await apiRequest("team/all", "GET");
-      setTeams(teams);
-      console.log(teams);
-    }
+  // useEffect(() => {
+  //   async function fetchTeams() {
+  //     const teams = await apiRequest("team/all", "GET");
+  //     setTeams(teams);
+  //     console.log(teams);
+  //   }
 
-    async function fetchCurrentUser() {
-      const currentUser = await apiRequest(
-        `user/eth/${window.ethereum.selectedAddress}`,
-        "GET"
-      );
-      setUser(currentUser);
-    }
+  //   async function fetchCurrentUser() {
+  //     const currentUser = await apiRequest(
+  //       `user/eth/${window.ethereum.selectedAddress}`,
+  //       "GET"
+  //     );
+  //     setUser(currentUser);
+  //   }
 
-    fetchTeams();
-    fetchCurrentUser();
-  }, []);
+  //   fetchTeams();
+  //   fetchCurrentUser();
+  // }, []);
 
   return (
     <>

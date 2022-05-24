@@ -24,6 +24,7 @@
     "gravatar": "^1.8.2",
     "json-server": "^0.17.0",
     "next": "^12.0.7",
+    "nft.storage": "^6.3.0",
     "node-fetch": "^3.1.0",
     "query-string": "^7.0.1",
     "random-name": "^0.1.2",

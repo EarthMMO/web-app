@@ -19,17 +19,17 @@ export default function CreateTeamModal({
   const [teamUrl, setTeamUrl] = useState("");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    async function fetchCurrentUser() {
-      const currentUser = await apiRequest(
-        `user/eth/${window.ethereum.selectedAddress}`,
-        "GET"
-      );
-      setUser(currentUser);
-    }
+  // useEffect(() => {
+  //   async function fetchCurrentUser() {
+  //     const currentUser = await apiRequest(
+  //       `user/eth/${window.ethereum.selectedAddress}`,
+  //       "GET"
+  //     );
+  //     setUser(currentUser);
+  //   }
 
-    fetchCurrentUser();
-  }, []);
+  //   fetchCurrentUser();
+  // }, []);
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;

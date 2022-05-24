@@ -48,26 +48,26 @@ export default function Navbar() {
   const [signer, setSigner] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    async function setProviderAndSigner() {
-      const { provider, signer } = await connectWallet();
-      setProvider(provider);
-      setSigner(signer);
-    }
+  // useEffect(() => {
+  //   async function setProviderAndSigner() {
+  //     const { provider, signer } = await connectWallet();
+  //     setProvider(provider);
+  //     setSigner(signer);
+  //   }
 
-    async function fetchCurrentUser() {
-      const currentUser = await apiRequest(
-        `user/eth/${window.ethereum.selectedAddress}`,
-        "GET"
-      );
-      setUser(currentUser);
-    }
+  //   // async function fetchCurrentUser() {
+  //   //   const currentUser = await apiRequest(
+  //   //     `user/${window.ethereum.selectedAddress}`,
+  //   //     "GET"
+  //   //   );
+  //   //   setUser(currentUser);
+  //   // }
 
-    if (window.ethereum.selectedAddress !== null) {
-      setProviderAndSigner();
-      fetchCurrentUser();
-    }
-  }, []);
+  //   if (window.ethereum.selectedAddress !== null) {
+  //     setProviderAndSigner();
+  //     fetchCurrentUser();
+  //   }
+  // }, []);
 
   /* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */
   return (

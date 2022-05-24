@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import addressJson from "../abis/EventMinter_address.json";
 
 export async function requestAccount() {
@@ -100,7 +100,6 @@ export const EventMinterNft = async ({
   contract,
   quantity,
   URI,
-  price,
   resetState,
   setLoading,
 }) => {
@@ -108,47 +107,10 @@ export const EventMinterNft = async ({
     if (!contract) {
       return;
     }
-    const value = ethers.utils.parseEther(price.toString());
-    const txn = await contract.mintABook(quantity, URI, value);
+    const txn = await contract.EventMinter(quantity, URI);
     await txn.wait();
     resetState();
     setLoading(false);
-    toast("Wow, you minted a book 🎉!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const buyBookNft = async (
-  contract,
-  tokenId,
-  price,
-  setBuyInProgress,
-  setAvailableBooks
-) => {
-  try {
-    if (!contract) {
-      return;
-    }
-    setBuyInProgress({ [tokenId]: true });
-    const txn = await contract.buy(tokenId, {
-      value: price,
-    });
-    await txn.wait();
-    setBuyInProgress({ [tokenId]: false });
-    const updatedNumberOfBooks = await contract.balanceOf(
-      addressJson.address,
-      tokenId
-    );
-    setAvailableBooks(parseInt(updatedNumberOfBooks._hex, 16));
   } catch (error) {
     console.log(error);
   }
