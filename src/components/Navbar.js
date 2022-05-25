@@ -40,13 +40,12 @@ const navigation = [
   { name: "Trending", href: "#", icon: TrendingUpIcon, current: false },
 ];
 
-export default function Navbar() {
+export default function Navbar({ user, setUser }) {
   const [connecting, setConnecting] = useState(false);
   const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [user, setUser] = useState(null);
 
   // useEffect(() => {
   //   async function setProviderAndSigner() {

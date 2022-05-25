@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 
 import { usePreviewImage } from "../utils/usePreviewImage";
@@ -8,6 +8,22 @@ export default function CreateEventForm({
   formState,
   setFormState,
 }) {
+  const uploadedImage = useRef(null);
+  const imageUploader = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const [file] = e.target.files;
+    if (file) {
+      const reader = new FileReader();
+      const { current } = uploadedImage;
+      current.file = file;
+      reader.onload = (e) => {
+        current.src = e.target.result;
+        setFormState({ ...formState, nftFile: file });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const handleInputChange = (e) => {
     setFormState((state) => ({
       ...state,
@@ -87,7 +103,6 @@ export default function CreateEventForm({
                         id="description"
                         name="description"
                         rows={3}
-                        required
                         onChange={handleInputChange}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Tell us about your event"
@@ -258,7 +273,6 @@ export default function CreateEventForm({
                             <input
                               id="coverFile"
                               name="coverFile"
-                              required
                               onChange={handleInputChange}
                               type="file"
                               className="sr-only"
@@ -283,7 +297,6 @@ export default function CreateEventForm({
                       type="text"
                       name="location"
                       id="location"
-                      required
                       onChange={handleInputChange}
                       placeholder="City, street ..."
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
@@ -304,7 +317,6 @@ export default function CreateEventForm({
                         type="text"
                         name="price"
                         id="price"
-                        required
                         onChange={handleInputChange}
                         className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
                         placeholder="0.00"
@@ -347,7 +359,6 @@ export default function CreateEventForm({
                       type="text"
                       name="eventName"
                       id="eventName"
-                      required
                       onChange={handleInputChange}
                       className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     />
@@ -364,7 +375,6 @@ export default function CreateEventForm({
                         id="nftDescription"
                         name="nftDescription"
                         rows={2}
-                        required
                         onChange={handleInputChange}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Tell us something about the NFT you will mint"
@@ -413,7 +423,8 @@ export default function CreateEventForm({
                               id="nftFile"
                               name="nftFile"
                               required
-                              onChange={handleInputChange}
+                              ref={uploadedImage}
+                              onChange={handleImageUpload}
                               type="file"
                               className="sr-only"
                             />

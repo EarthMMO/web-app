@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navbar";
 import CreateEventForm from "../../components/CreateEvent";
-import {
-  checkIfWalletIsConnected,
-  updateProviderAndContract,
-  EventMinterNft,
-} from "../../utils/common";
 
+import { apiRequest } from "utils";
 import { NFTStorage } from "nft.storage";
 
 import abiJson from "../../abis/EventMinter_abi.json";
 import addressJson from "../../abis/EventMinter_address.json";
 
-const initalState = {
+const initialState = {
   currency: "USD",
 };
 
@@ -22,54 +18,38 @@ const API_KEY = process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY;
 const client = new NFTStorage({ token: API_KEY });
 
 export default function CreateEvent() {
-  const [formState, setFormState] = useState(initalState);
+  const [formState, setFormState] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [minted, setMinted] = useState(false);
-  const [contractRes, setContractRes] = useState(null);
-  console.log(formState);
-  const [contract, setContract] = useState(null);
-  const [provider, setProvider] = useState(null);
-  const [currentAccount, setCurrentAccount] = useState("");
+
+  const [user, setUser] = useState(null);
+  console.log("user", formState);
+
   const address = addressJson.address;
   const contractABI = abiJson.abi;
 
-  useEffect(() => {
-    checkIfWalletIsConnected(setCurrentAccount);
-    updateProviderAndContract(address, contractABI, setProvider, setContract);
-  }, []);
-
   const handleSubmitandMint = async (e) => {
     e.preventDefault();
-    console.log("submitting formState", formState);
+
     setLoading(true);
-
-    const metadata = await client.store({
+    let image = formState.nftFile;
+    let jwt = user.jwt;
+    console.log("img", image);
+    const response = await apiRequest("v0/event", "POST", jwt, {
       name: formState.title,
-      description: formState.description,
-      image: formState.nftFile,
-      properties: { type: "eventNFT" },
+      numberOfMember: formState.maxAttendees,
+      eventImage: image,
     });
-
-    const url = metadata.url.split("//");
-    const URI = `https://ipfs.io/ipfs/${url[1]}`;
-    console.log("URI", URI);
-    EventMinterNft({
-      contract,
-      quantity: formState.max_attendees,
-      URI,
-      resetState: () => setFormState(initialState),
-      setLoading: setLoading,
-    }).then((res) => {
-      console.log(res);
-      setContractRes(res);
-      setMinted(true);
-    });
+    console.log("res", response);
+    setFormState(initialState);
+    setLoading(false);
+    setMinted(true);
   };
 
   if (minted) {
     return (
       <div>
-        <Navbar />
+        <Navbar user={user} setUser={setUser} />
         <h1>Your event has been created!</h1>
         <h2>
           You can find it on{" "}
@@ -82,7 +62,7 @@ export default function CreateEvent() {
   }
   return (
     <>
-      <Navbar />
+      <Navbar user={user} setUser={setUser} />
       {!loading ? (
         <CreateEventForm
           handleSubmitandMint={handleSubmitandMint}

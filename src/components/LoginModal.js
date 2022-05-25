@@ -33,12 +33,13 @@ export default function LoginModal({
           );
           const signature = await wallet.signMessage(Buffer.from("hello"));
 
-          const response = await apiRequest("v0/user", "POST", {
+          const response = await apiRequest("v0/user", "POST", "", {
             ethereumAddress: wallet.address,
             signature,
           });
-          console.log("res", response);
-          setUser(response.userId);
+          // console.log("res", response);
+          setUser(response);
+          localStorage.setItem("user", response);
           setConnecting(false);
 
           // const name = response.firstName + " " + response.lastName;
