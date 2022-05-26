@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navbar";
 import CreateEventForm from "../../components/CreateEvent";
-
+import { updateProviderAndContract, EventMinterNft } from "../../utils/common";
 import { apiRequestForm } from "utils";
-import { NFTStorage } from "nft.storage";
 
 import abiJson from "../../abis/EventMinter_abi.json";
 import addressJson from "../../abis/EventMinter_address.json";
@@ -18,12 +17,18 @@ export default function CreateEvent() {
   const [formState, setFormState] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [minted, setMinted] = useState(false);
+  const [contract, setContract] = useState(null);
 
   const [user, setUser] = useState(null);
-  console.log("form", formState);
+  // console.log("contract", contract);
 
   const address = addressJson.address;
   const contractABI = abiJson.abi;
+  //TODO: get user from local storage
+
+  useEffect(() => {
+    updateProviderAndContract(address, contractABI, setContract);
+  }, []);
 
   const handleSubmitandMint = async (e) => {
     e.preventDefault();
@@ -36,9 +41,22 @@ export default function CreateEvent() {
     formdata.append("name", formState.title);
     formdata.append("numberOfMember", formState.maxAttendees);
     formdata.append("eventImage", image);
-    console.log("formdata", formdata);
     const response = await apiRequestForm("v0/event", "POST", jwt, formdata);
-    console.log("res", response);
+
+    const URI = `https://ipfs.io/ipfs/${response.ItemNFTImageHash}`;
+
+    EventMinterNft({
+      contract,
+      quantity: formState.maxAttendees,
+      URI,
+      resetState: () => setFormState(initialState),
+      setLoading: setLoading,
+      setMinted: setMinted,
+    }).then((res) => {
+      console.log("res", res);
+    });
+    //TODO: call api to update event with eventId
+
     setFormState(initialState);
     setLoading(false);
     setMinted(true);

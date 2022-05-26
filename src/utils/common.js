@@ -29,7 +29,6 @@ export const getSignedContract = (address, contractABI) => {
 export const updateProviderAndContract = (
   address,
   contractABI,
-  setProvider,
   setContract
 ) => {
   const { ethereum } = window;
@@ -40,7 +39,6 @@ export const updateProviderAndContract = (
   const signer = provider.getSigner();
   const contract = new ethers.Contract(address, contractABI, signer);
 
-  setProvider(provider);
   setContract(contract);
 };
 
@@ -102,15 +100,19 @@ export const EventMinterNft = async ({
   URI,
   resetState,
   setLoading,
+  setMinted,
 }) => {
   try {
     if (!contract) {
       return;
     }
-    const txn = await contract.EventMinter(quantity, URI);
+    const txn = await contract.mintEventNFT(Number(quantity), URI);
+    console.log("txn", txn);
     await txn.wait();
     resetState();
     setLoading(false);
+    setMinted(true);
+    return txn;
   } catch (error) {
     console.log(error);
   }

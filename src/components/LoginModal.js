@@ -41,28 +41,6 @@ export default function LoginModal({
           setUser(response);
           localStorage.setItem("user", response);
           setConnecting(false);
-
-          // const name = response.firstName + " " + response.lastName;
-
-          // const profile = new ethers.Contract(
-          //   PROFILE_CONTRACT_ADDRESS,
-          //   ABI,
-          //   auth.signer
-          // );
-          // const tx = await profile.mintProfile(
-          //   name,
-          //   "Profile Description",
-          //   `ipfs://${response.fileHash}`
-          // );
-
-          // const receipt = await tx.wait();
-
-          // const id = await profile.totalSupply();
-
-          // const updateResponse = await apiRequest("user", "PATCH", {
-          //   userId: name,
-          //   profileNFTTokenId: id.toString(),
-          // });
         } catch (error) {
           setConnecting(false);
           console.log(error);

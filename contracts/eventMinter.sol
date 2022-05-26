@@ -13,13 +13,13 @@ contract EventMinter is ERC1155, ERC1155Holder {
     Counters.Counter public bodyIds;
 
     struct Event {
-        string URI;
-        address organizer;
         uint256 quantity;
+        address organizer;
+        string URI;
     }
     struct Body {
-        string URI;
         address bodyowner;
+        string URI;
     }
 
     //event eventId => eventURI
@@ -113,7 +113,6 @@ contract EventMinter is ERC1155, ERC1155Holder {
         eventNFTOwnedByUser[msg.sender].push(_eventId);
 
         return true;
-        //return tokenId
     }
 
     //events NFTs owned by user
