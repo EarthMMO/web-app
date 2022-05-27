@@ -31,6 +31,8 @@ contract EventMinter is ERC1155, ERC1155Holder {
     //user => bodyId
     mapping(address => uint256) internal iDofBodyOwnedbyUser;
 
+    event eventCreated(uint256 eventId, address owner);
+
     constructor() ERC1155("") {
         owner = msg.sender;
     }
@@ -99,6 +101,7 @@ contract EventMinter is ERC1155, ERC1155Holder {
         setApprovalForAll(address(this), true);
         eventIds.increment();
         // emit some success notification
+        emit eventCreated(eventId, msg.sender);
         return eventId;
     }
 

@@ -42,7 +42,7 @@
     "lint": "next lint",
     "build": "next build",
     "start": "next start",
-    "deploy:local": "cross-env EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/deploy.js --network hardhat",
+    "deploy:local": "cross-env EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/deploy.js --network rinkeby",
     "deploy:localhost": "cross-env EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/deploy.js --network localhost",
     "json-server": "json-server --watch db.json --port 8000",
     "prepare": "husky install"
