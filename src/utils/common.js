@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-// import { toast } from "react-toastify";
 import addressJson from "../abis/EventMinter_address.json";
 
 export async function requestAccount() {
@@ -81,19 +80,6 @@ export const connectWallet = async (setCurrentAccount) => {
   }
 };
 
-export const getTokenCount = async (contract) => {
-  try {
-    if (!contract) {
-      return;
-    }
-
-    const result = await contract._tokenIds();
-    return result;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const EventMinterNft = async ({
   contract,
   quantity,
@@ -107,12 +93,12 @@ export const EventMinterNft = async ({
       return;
     }
     const txn = await contract.mintEventNFT(Number(quantity), URI);
-    console.log("txn", txn);
-    await txn.wait();
+    const { events } = await txn.wait();
+
     resetState();
     setLoading(false);
     setMinted(true);
-    return txn;
+    return events[2].args[0];
   } catch (error) {
     console.log(error);
   }

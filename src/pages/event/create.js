@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navbar";
 import CreateEventForm from "../../components/CreateEvent";
 import { updateProviderAndContract, EventMinterNft } from "../../utils/common";
-import { apiRequestForm } from "utils";
+import { apiRequestForm, apiRequest } from "utils";
 
 import abiJson from "../../abis/EventMinter_abi.json";
 import addressJson from "../../abis/EventMinter_address.json";
@@ -42,7 +42,7 @@ export default function CreateEvent() {
     formdata.append("numberOfMember", formState.maxAttendees);
     formdata.append("eventImage", image);
     const response = await apiRequestForm("v0/event", "POST", jwt, formdata);
-
+    console.log("response", response);
     const URI = `https://ipfs.io/ipfs/${response.ItemNFTImageHash}`;
 
     EventMinterNft({
@@ -52,14 +52,15 @@ export default function CreateEvent() {
       resetState: () => setFormState(initialState),
       setLoading: setLoading,
       setMinted: setMinted,
-    }).then((res) => {
-      console.log("res", res);
-    });
-    //TODO: call api to update event with eventId
+    }).then(async (res) => {
+      let contractId = parseInt(res._hex, 16);
 
-    setFormState(initialState);
-    setLoading(false);
-    setMinted(true);
+      const patch = await apiRequest("v0/event", "PATCH", jwt, {
+        eventId: response.eventId,
+        itemEventId: `${contractId}`,
+      });
+      console.log("patch", patch);
+    });
   };
 
   if (minted) {
