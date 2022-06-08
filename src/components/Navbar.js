@@ -102,7 +102,7 @@ export default function Navbar({ user, setUser }) {
                     <a className="flex items-center w-auto" href="#">
                       <Image src="/lfp.svg" height={30} width={30} />
                       <span className="hidden lg:block ml-2 font-philosopher font-bold text-2xl">
-                        Looking for Party
+                        EarthMMO
                       </span>
                     </a>
                   </div>

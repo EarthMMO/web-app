@@ -34,87 +34,37 @@ export default function CreateEventForm({
   const coverFile = usePreviewImage(formState.coverFile);
   const nftFile = usePreviewImage(formState.nftFile);
   return (
-    <div className="py-8 max-w-3xl mx-auto sm:px-6 lg:max-w-screen-2xl">
+    <div className="py-8 max-w-3xl mx-auto sm:px-6">
       <div>
-        <div className="md:grid md:grid-cols-3 md:gap-6">
+        <div className="md:grid md:grid-cols-1 md:gap-6">
           <div className="md:col-span-1">
             <div className="px-4 sm:px-0">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Event
+              <h3 className="text-[36px] font-bold leading-6 text-gray-900">
+                Create Event
               </h3>
-              <p className="mt-1 text-sm text-gray-600">
-                Add here all the event info
-              </p>
             </div>
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <form onSubmit={handleSubmitandMint}>
               <div className="shadow sm:rounded-md sm:overflow-hidden ">
-                <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-                  <div className="grid grid-cols-3 gap-6">
-                    <div className="col-span-3 sm:col-span-2">
-                      <label
-                        htmlFor="title"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Event name
-                      </label>
-                      <input
-                        type="text"
-                        name="title"
-                        id="title"
-                        required
-                        onChange={handleInputChange}
-                        className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div className="col-span-3 sm:col-span-2">
-                      <label
-                        htmlFor="website"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Website
-                      </label>
-                      <div className="mt-1 flex rounded-md shadow-sm">
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          http://
-                        </span>
-                        <input
-                          type="text"
-                          name="website"
-                          id="website"
-                          onChange={handleInputChange}
-                          className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
-                          placeholder="www.example.com"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
+                <div className="px-4 bg-white space-y-6 sm:p-6">
+                  <div className="grid grid-cols-1">
                     <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-700"
+                      htmlFor="title"
+                      className="text-sm font-medium text-gray-700"
                     >
-                      Description
+                      Event name
                     </label>
-                    <div className="mt-1">
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={3}
-                        onChange={handleInputChange}
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-                        placeholder="Tell us about your event"
-                        defaultValue={""}
-                      />
-                    </div>
-                    {/* <p className="mt-2 text-sm text-gray-500">
-                        Brief description for your profile. URLs are
-                        hyperlinked.
-                      </p> */}
-                  </div>
-                  <div className="grid grid-cols-6 gap-6">
+                    <input
+                      type="text"
+                      name="title"
+                      id="title"
+                      required
+                      onChange={handleInputChange}
+                      className="mb-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    />
+                    <div className="grid grid-cols-6 gap-6">
+                      {/*
                     <div className="col-span-6 sm:col-span-3">
                       <label
                         htmlFor="minAttendees"
@@ -132,25 +82,8 @@ export default function CreateEventForm({
                         className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
-
-                    <div className="col-span-6 sm:col-span-3">
-                      <label
-                        htmlFor="maxAttendees"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Max number of atendees
-                      </label>
-                      <input
-                        type="number"
-                        name="maxAttendees"
-                        id="maxAttendees"
-                        required
-                        onChange={handleInputChange}
-                        min={0}
-                        placeholder="100"
-                        className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
+                    */}
+                      {/*
                     <div className="col-span-6 sm:col-span-3">
                       <label
                         htmlFor="minTeam"
@@ -237,7 +170,9 @@ export default function CreateEventForm({
                         className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       />
                     </div>
-                  </div>
+                  */}
+                    </div>
+                    {/*
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Cover photo
@@ -339,15 +274,14 @@ export default function CreateEventForm({
                       </div>
                     </div>
                   </div>
-                </div>
-                {/* separation line */}
-                <div className="hidden sm:block" aria-hidden="true">
-                  <div className="py-5">
-                    <div className="border-t border-gray-200" />
+                        */}
                   </div>
                 </div>
-                {/* NFT data */}
+                <div className="hidden sm:block" aria-hidden="true">
+                  <div className="border-t border-gray-200" />
+                </div>
                 <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+                  {/*
                   <div className="w-1/2">
                     <label
                       htmlFor="eventName"
@@ -382,9 +316,33 @@ export default function CreateEventForm({
                       />
                     </div>
                   </div>
+                  */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Upload NFT photo
+                    <label className="text-sm font-medium text-gray-700">
+                      NFT name
+                    </label>
+                    <input
+                      type="text"
+                      className="mb-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    />
+                    <label
+                      htmlFor="description"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      NFT description
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="description"
+                        name="description"
+                        rows={4}
+                        onChange={handleInputChange}
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                        defaultValue={""}
+                      />
+                    </div>
+                    <label className="mt-5 block text-sm font-medium text-gray-700">
+                      Upload NFT image
                     </label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                       <div className="space-y-1 text-center">
@@ -437,11 +395,29 @@ export default function CreateEventForm({
                       </div>
                     </div>
                   </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      htmlFor="maxAttendees"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Max supply to mint
+                    </label>
+                    <input
+                      type="number"
+                      name="maxAttendees"
+                      id="maxAttendees"
+                      required
+                      onChange={handleInputChange}
+                      min={0}
+                      placeholder="0"
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
                 </div>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
                     type="submit"
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-neutral-800 hover:bg-neutral-900"
                   >
                     Create and Mint
                   </button>
