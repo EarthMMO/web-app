@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navbar";
 import CreateEventForm from "../../components/CreateEvent";
-import { updateProviderAndContract, EventMinterNft } from "../../utils/common";
+import {
+  updateProviderAndContract,
+  EventMinterNft,
+  checkIfWalletIsConnected,
+} from "../../utils/common";
 import { apiRequestForm, apiRequest } from "utils";
 
 import abiJson from "../../abis/EventMinter_abi.json";
@@ -20,14 +24,15 @@ export default function CreateEvent() {
   const [contract, setContract] = useState(null);
 
   const [user, setUser] = useState(null);
-  // console.log("contract", contract);
 
   const address = addressJson.address;
   const contractABI = abiJson.abi;
-  //TODO: get user from local storage
 
   useEffect(() => {
     updateProviderAndContract(address, contractABI, setContract);
+    const data = localStorage.getItem("user");
+    setUser(JSON.parse(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmitandMint = async (e) => {
