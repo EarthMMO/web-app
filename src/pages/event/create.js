@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/navbar";
+import Navbar from "../../components/Navbar";
 import CreateEventForm from "../../components/CreateEvent";
 import {
   updateProviderAndContract,
