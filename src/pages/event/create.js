@@ -31,8 +31,7 @@ export default function CreateEvent() {
   useEffect(() => {
     updateProviderAndContract(address, contractABI, setContract);
     const data = localStorage.getItem("user");
-    setUser(JSON.parse(data));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setUser(data);
   }, []);
 
   const handleSubmitandMint = async (e) => {
