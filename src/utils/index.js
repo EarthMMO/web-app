@@ -3,7 +3,6 @@ import { BACKEND_API_URL } from "config/config";
 
 export function apiRequest(path, method = "GET", jwt = "accessToken", data) {
   //const accessToken = fakeAuth.getAccessToken();
-  console.log("data", jwt, data);
   return fetch(`${BACKEND_API_URL}/api/${path}`, {
     method: method,
     headers: {
@@ -33,7 +32,6 @@ export function apiRequestForm(
   data
 ) {
   //const accessToken = fakeAuth.getAccessToken();
-  console.log("data", jwt, data);
   return fetch(`${BACKEND_API_URL}/api/${path}`, {
     method: method,
     headers: {

@@ -29,7 +29,7 @@ export default function CreateEvent() {
 
   useEffect(() => {
     updateProviderAndContract(address, contractABI, setContract);
-    const data = localStorage.getItem("user");
+    const data = JSON.parse(localStorage.getItem("user"));
     setUser(data);
   }, []);
 
@@ -61,7 +61,7 @@ export default function CreateEvent() {
         eventId: response.eventId,
         itemEventId: `${contractId}`,
       });
-      console.log("patch", patch);
+      console.log("v0/event, 'PATCH' made it", patch);
     });
   };
 
