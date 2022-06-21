@@ -44,8 +44,9 @@ export async function connectWallet() {
 
     const provider = new ethers.providers.Web3Provider(instance);
     const signer = provider.getSigner();
+    const signature = await signer.signMessage(Buffer.from("hello"));
 
-    return { provider, signer };
+    return { provider, signer, signature };
   } catch (error) {
     return null;
   }

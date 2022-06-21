@@ -24,7 +24,6 @@ export default function CreateEvent() {
   const [contract, setContract] = useState(null);
 
   const [user, setUser] = useState(null);
-
   const address = addressJson.address;
   const contractABI = abiJson.abi;
 
@@ -46,7 +45,6 @@ export default function CreateEvent() {
     formdata.append("numberOfMember", formState.maxAttendees);
     formdata.append("eventImage", image);
     const response = await apiRequestForm("v0/event", "POST", jwt, formdata);
-    console.log("response", response);
     const URI = `https://ipfs.io/ipfs/${response.ItemNFTImageHash}`;
 
     EventMinterNft({
