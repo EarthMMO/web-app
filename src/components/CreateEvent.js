@@ -323,6 +323,9 @@ export default function CreateEventForm({
                     </label>
                     <input
                       type="text"
+                      id="itemName"
+                      name="itemName"
+                      onChange={handleInputChange}
                       className="mb-5 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     />
                     <label
@@ -333,8 +336,8 @@ export default function CreateEventForm({
                     </label>
                     <div className="mt-1">
                       <textarea
-                        id="description"
-                        name="description"
+                        id="itemDescription"
+                        name="itemDescription"
                         rows={4}
                         onChange={handleInputChange}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"

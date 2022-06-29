@@ -127,7 +127,7 @@ export default function Example() {
                     href="#"
                     className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50"
                   >
-                    Log in
+                    Launch App
                   </a>
                 </span>
               </div>

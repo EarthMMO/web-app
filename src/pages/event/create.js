@@ -42,6 +42,8 @@ export default function CreateEvent() {
 
     let formdata = new FormData();
     formdata.append("name", formState.title);
+    formdata.append("itemName", formState.itemName);
+    formdata.append("itemDescription", formState.itemDescription);
     formdata.append("numberOfMember", formState.maxAttendees);
     formdata.append("eventImage", image);
     const response = await apiRequestForm("v0/event", "POST", jwt, formdata);
